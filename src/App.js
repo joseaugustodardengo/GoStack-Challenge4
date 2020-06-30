@@ -22,7 +22,15 @@ export default function App() {
 
 
   async function handleLikeRepository(id) {
-    
+    const response = await api.post(`repositories/${id}/like`);
+
+    const newRepositories = repositories.map(repository => {
+      if(repository.id === id) return response.data;
+
+      return repository;
+    })
+
+    setRepositories(newRepositories)
   }
 
   return (
@@ -35,7 +43,7 @@ export default function App() {
                 <Text key={repository.id} style={styles.repository}>{repository.title}</Text>
 
                 <View style={styles.techsContainer}>
-                  {repository.techs.map(tech => <Text key={tech.id} style={styles.tech}>
+                  {repository.techs.map(tech => <Text key={tech} style={styles.tech}>
                     {tech}
                   </Text>)}
                 </View>
@@ -43,7 +51,6 @@ export default function App() {
                 <View style={styles.likesContainer}>
                   <Text
                     style={styles.likeText}
-                    // Remember to replace "1" below with repository ID: {`repository-likes-${repository.id}`}
                     testID={`repository-likes-${repository.id}`}
                   >
                     {repository.likes} curtidas
@@ -52,8 +59,7 @@ export default function App() {
                 
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={() => handleLikeRepository(1)}
-                  // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
+                  onPress={() => handleLikeRepository(repository.id)}
                   testID={`like-button-${repository.id}`}
                 >
                   <Text style={styles.buttonText}>Curtir</Text>
